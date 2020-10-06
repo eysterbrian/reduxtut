@@ -18,9 +18,18 @@ const postsSlice = createSlice({
       // We can mutate state here since we're inside createSlice
       state.push(action.payload)
     },
+    postUpdated: (state, action) => {
+      const { id, title, content } = action.payload // Destructure entire payload to document payload obj shape
+      const post = state.find((post) => post.id === id)
+      if (post) {
+        post.title = title
+        post.content = content
+      }
+      // TODO: Signal an error if the post.id does not exist!
+    },
   },
 })
 
 export default postsSlice.reducer
-export const { postAdded } = postsSlice.actions
+export const { postAdded, postUpdated } = postsSlice.actions
 // export const { postAdded: postsSlice.actions.postAdded }

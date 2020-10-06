@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 // NOTE: This component expects the postId to be passed as
 // a match.params from React Router
@@ -21,6 +21,7 @@ export default function SinglePostPage({ match }) {
       <article className="post">
         <h2>{post.title}</h2>
         <p className="post-content">{post.content}</p>
+        <Link to={`/editPost/${post.id}`}>Edit Post</Link>
       </article>
     </section>
   )
