@@ -30,14 +30,23 @@ const postsSlice = createSlice({
         }
       },
     },
-    postUpdated: (state, action) => {
-      const { id, title, content } = action.payload // Destructure entire payload to document payload obj shape
-      const post = state.find((post) => post.id === id)
-      if (post) {
-        post.title = title
-        post.content = content
-      }
-      // TODO: Signal an error if the post.id does not exist!
+    postUpdated: {
+      reducer: (state, action) => {
+        const { id, title, content } = action.payload // Destructure entire payload to document payload obj shape
+        const post = state.find((post) => post.id === id)
+        if (post) {
+          post.title = title
+          post.content = content
+        }
+        // TODO: Signal an error if the post.id does not exist!
+      },
+      // Specify a prepare callback so the caller knows exactly what args to pass
+      prepare: (id, title, content) => {
+        return {
+          // Create the payload from our args
+          payload: { id, title, content },
+        }
+      },
     },
   },
 })
