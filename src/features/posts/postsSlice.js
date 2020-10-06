@@ -21,12 +21,13 @@ const postsSlice = createSlice({
         state.push(action.payload)
       },
       // A "prepare callback": Modifies the action creator to take specific args and generate payload
-      prepare: (title, content) => {
+      prepare: (title, content, userId) => {
         return {
           payload: {
             id: nanoid(), // ok to generate random string here, just not inside reducer!
             title,
             content,
+            authorId: userId,
           },
         }
       },
