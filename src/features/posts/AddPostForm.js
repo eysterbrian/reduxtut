@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { selectAllUsers } from '../users/usersSlice'
 import { postAdded } from './postsSlice'
 
 export default function AddPostForm() {
@@ -10,8 +11,6 @@ export default function AddPostForm() {
   const dispatch = useDispatch()
 
   const onSavePostClicked = () => {
-    console.log('Inside onSavePostClicked()...')
-
     // Only save this post if it has a title and some content
     if (title && content) {
       dispatch(postAdded(title, content, userId))
@@ -23,7 +22,7 @@ export default function AddPostForm() {
     }
   }
 
-  const users = useSelector((state) => state.users)
+  const users = useSelector(selectAllUsers)
 
   const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
 
