@@ -80,5 +80,15 @@ const postsSlice = createSlice({
 })
 
 export default postsSlice.reducer
+
+// export the actions created by createSlice()
 export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
-// export const { postAdded: postsSlice.actions.postAdded }
+
+// Define selectors to encapsulate the structure of the slice's state
+
+// Note that `state` is global state here rather than slice's state,
+// so we have to access slice state via state.posts
+export const selectAllPosts = (state) => state.posts
+
+export const selectPostById = (state, postId) =>
+  state.posts.find((post) => post.id === postId)

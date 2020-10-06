@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { postUpdated } from './postsSlice'
+import { postUpdated, selectPostById } from './postsSlice'
 
 export default function EditPostForm() {
   const { postId } = useParams()
 
-  const origPost = useSelector((state) =>
-    state.posts.find((post) => post.id === postId)
-  )
+  const origPost = useSelector((state) => selectPostById(state, postId))
 
   // Note the use of the "optional chaining" syntax "?." in case origPost was not found
   const [title, setTitle] = useState(origPost?.title)

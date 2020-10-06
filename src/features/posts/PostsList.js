@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom'
 import PostAuthor from './PostAuthor'
 import TimeAgo from './TimeAgo'
 import ReactionButtons from './ReactionButtons'
+import { selectAllPosts } from './postsSlice'
 
 export default function PostsList() {
   // useSelector has access to the entire state in all slices
-  const posts = useSelector((state) => state.posts)
+  const posts = useSelector(selectAllPosts)
 
   const sortedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
 

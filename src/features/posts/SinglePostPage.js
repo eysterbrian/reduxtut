@@ -4,14 +4,14 @@ import { useParams, Link } from 'react-router-dom'
 import PostAuthor from './PostAuthor'
 import TimeAgo from './TimeAgo'
 import ReactionButtons from './ReactionButtons'
+import { selectPostById } from './postsSlice'
 
 // NOTE: This component expects the postId to be passed as
 // a match.params from React Router
 export default function SinglePostPage({ match }) {
   const { postId } = useParams() // Access match.params.postId
-  const post = useSelector((state) =>
-    state.posts.find((post) => post.id === postId)
-  )
+  const post = useSelector((state) => selectPostById(state, postId))
+
   if (!post) {
     return (
       <section>
