@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { nanoid } from '@reduxjs/toolkit'
 import { postAdded } from './postsSlice'
 
 export default function AddPostForm() {
@@ -14,13 +13,7 @@ export default function AddPostForm() {
 
     // Only save this post if it has a title and some content
     if (title && content) {
-      dispatch(
-        postAdded({
-          id: nanoid(),
-          title,
-          content,
-        })
-      )
+      dispatch(postAdded(title, content))
 
       // Clear the form once the post has been saved
       setTitle('')

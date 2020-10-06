@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, nanoid } from '@reduxjs/toolkit'
 
 const initialState = [
   { id: '1', title: 'First Post', content: 'howdy doo!' },
@@ -14,9 +14,21 @@ const postsSlice = createSlice({
   initialState,
   reducers: {
     // Within createSlice, the state is just this slice's state
-    postAdded: (state, action) => {
-      // We can mutate state here since we're inside createSlice
-      state.push(action.payload)
+    postAdded: {
+      reducer: (state, action) => {
+        // We can mutate state here since we're inside createSlice
+        state.push(action.payload)
+      },
+      // A "prepare callback": Modifies the action creator to take specific args and generate payload
+      prepare: (title, content) => {
+        return {
+          payload: {
+            id: nanoid(), // ok to generate random string here, just not inside reducer!
+            title,
+            content,
+          },
+        }
+      },
     },
     postUpdated: (state, action) => {
       const { id, title, content } = action.payload // Destructure entire payload to document payload obj shape
