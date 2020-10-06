@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { useParams, Link } from 'react-router-dom'
 import PostAuthor from './PostAuthor'
 import TimeAgo from './TimeAgo'
+import ReactionButtons from './ReactionButtons'
 
 // NOTE: This component expects the postId to be passed as
 // a match.params from React Router
@@ -25,6 +26,7 @@ export default function SinglePostPage({ match }) {
         <PostAuthor userId={post.authorId} />
         (<TimeAgo timestamp={post.date} />)
         <p className="post-content">{post.content}</p>
+        <ReactionButtons post={post} />
         <Link to={`/editPost/${post.id}`}>Edit Post</Link>
       </article>
     </section>

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PostAuthor from './PostAuthor'
 import TimeAgo from './TimeAgo'
+import ReactionButtons from './ReactionButtons'
 
 export default function PostsList() {
   // useSelector has access to the entire state in all slices
@@ -20,6 +21,7 @@ export default function PostsList() {
           (<TimeAgo timestamp={post.date} />)
           <p>{post.content.substring(0, 100)}</p>
           <Link to={`/posts/${post.id}`}>View Post</Link>
+          <ReactionButtons post={post} />
         </article>
       ))}
     </section>
