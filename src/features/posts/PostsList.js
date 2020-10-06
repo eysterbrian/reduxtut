@@ -7,10 +7,13 @@ import TimeAgo from './TimeAgo'
 export default function PostsList() {
   // useSelector has access to the entire state in all slices
   const posts = useSelector((state) => state.posts)
+
+  const sortedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+
   return (
     <section>
       <h2>List of Posts</h2>
-      {posts.map((post) => (
+      {sortedPosts.map((post) => (
         <article className="post-excerpt" key={post.id}>
           <h3>{post.title}</h3>
           <PostAuthor userId={post.authorId} />
