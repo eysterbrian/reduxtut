@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PostAuthor from './PostAuthor'
+import TimeAgo from './TimeAgo'
 
 export default function PostsList() {
   // useSelector has access to the entire state in all slices
@@ -13,6 +14,7 @@ export default function PostsList() {
         <article className="post-excerpt" key={post.id}>
           <h3>{post.title}</h3>
           <PostAuthor userId={post.authorId} />
+          (<TimeAgo timestamp={post.date} />)
           <p>{post.content.substring(0, 100)}</p>
           <Link to={`/posts/${post.id}`}>View Post</Link>
         </article>
