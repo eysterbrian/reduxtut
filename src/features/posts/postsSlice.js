@@ -44,7 +44,7 @@ const postsSlice = createSlice({
             id: nanoid(), // ok to generate random string here, just not inside reducer!
             title,
             content,
-            authorId: userId,
+            user: userId,
             date: new Date().toISOString(),
             reactions: reactions_init,
           },

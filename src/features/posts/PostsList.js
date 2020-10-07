@@ -33,7 +33,7 @@ export default function PostsList() {
     content = sortedPosts.map((post) => (
       <article className="post-excerpt" key={post.id}>
         <h3>{post.title}</h3>
-        <PostAuthor userId={post.authorId} />
+        <PostAuthor userId={post.user} />
         (<TimeAgo timestamp={post.date} />)
         <p>{post.content.substring(0, 100)}</p>
         <Link to={`/posts/${post.id}`}>View Post</Link>
