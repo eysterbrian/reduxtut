@@ -1,32 +1,22 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
-import { sub } from 'date-fns'
 
-const noReactions = {
-  thumbsUp: 0,
-  hooray: 0,
-  heart: 0,
-  rocket: 0,
-  eyes: 0,
+const reactions_init = { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 }
+
+// eslint-disable-next-line
+const SAMPLE_POST = {
+  id: '1',
+  title: 'First Post',
+  content: 'howdy doo!',
+  authorId: '1',
+  date: new Date().toISOString(),
+  reactions: { thumbsUp: 0, hooray: 0, heart: 0, rocket: 0, eyes: 0 },
 }
 
-const initialState = [
-  {
-    id: '1',
-    title: 'First Post',
-    content: 'howdy doo!',
-    authorId: '1',
-    date: sub(new Date(), { minutes: 15 }).toISOString(),
-    reactions: noReactions,
-  },
-  {
-    id: '2',
-    title: "Brian's Second Post",
-    content: "Look at me, I'm a' postin'!",
-    authorId: '2',
-    date: sub(new Date(), { hours: 2 }).toISOString(),
-    reactions: noReactions,
-  },
-]
+const initialState = {
+  posts: [],
+  status: 'idle',
+  error: null,
+}
 
 const postsSlice = createSlice({
   name: 'posts',
@@ -34,9 +24,9 @@ const postsSlice = createSlice({
   reducers: {
     // Within createSlice, the state is just this slice's state
     postAdded: {
-      reducer: (state, action) => {
+      reducer: (sliceState, action) => {
         // We can mutate state here since we're inside createSlice
-        state.push(action.payload)
+        sliceState.posts.push(action.payload)
       },
       // A "prepare callback": Modifies the action creator to take specific args and generate payload
       prepare: (title, content, userId) => {
@@ -47,14 +37,15 @@ const postsSlice = createSlice({
             content,
             authorId: userId,
             date: new Date().toISOString(),
+            reactions: reactions_init,
           },
         }
       },
     },
     postUpdated: {
-      reducer: (state, action) => {
+      reducer: (sliceState, action) => {
         const { id, title, content } = action.payload // Destructure entire payload to document payload obj shape
-        const post = state.find((post) => post.id === id)
+        const post = sliceState.posts.find((post) => post.id === id)
         if (post) {
           post.title = title
           post.content = content
@@ -69,9 +60,9 @@ const postsSlice = createSlice({
         }
       },
     },
-    reactionAdded: (state, action) => {
+    reactionAdded: (sliceState, action) => {
       const { id, reaction } = action.payload
-      const post = state.find((post) => post.id === id)
+      const post = sliceState.posts.find((post) => post.id === id)
       if (post) {
         post.reactions[reaction]++
       }
@@ -88,7 +79,7 @@ export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
 
 // Note that `state` is global state here rather than slice's state,
 // so we have to access slice state via state.posts
-export const selectAllPosts = (state) => state.posts
+export const selectAllPosts = (rootState) => rootState.posts.posts
 
-export const selectPostById = (state, postId) =>
-  state.posts.find((post) => post.id === postId)
+export const selectPostById = (rootState, postId) =>
+  rootState.posts.posts.find((post) => post.id === postId)
