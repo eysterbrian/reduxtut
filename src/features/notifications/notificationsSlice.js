@@ -20,7 +20,7 @@ export const fetchNotifications = createAsyncThunk(
 
 const notificationsSlice = createSlice({
   name: 'notifications',
-  initialState: [], //--- { id, date, message, user }
+  initialState: [], //--- { id, date, message, user, isNew, read }
   reducers: {},
   extraReducers: {
     [fetchNotifications.fulfilled]: (state, action) => {
