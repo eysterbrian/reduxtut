@@ -10,7 +10,7 @@ export const fetchNotifications = createAsyncThunk(
     // TODO: Can't we just grab the latest notification directly, rather than getting all?
     const allNotifications = selectAllNotifications(getState())
     const latestNotification = allNotifications[0]
-    const latestTimestamp = latestNotification ? latestNotification.data : ''
+    const latestTimestamp = latestNotification ? latestNotification.date : ''
     const response = await client.get(
       `/fakeApi/notifications?since=${latestTimestamp}`
     )
@@ -21,9 +21,19 @@ export const fetchNotifications = createAsyncThunk(
 const notificationsSlice = createSlice({
   name: 'notifications',
   initialState: [], //--- { id, date, message, user, isNew, read }
-  reducers: {},
+  reducers: {
+    // Mark all notifications as read
+    allNotificationsRead: (state, action) => {
+      state.forEach((notification) => {
+        notification.read = true
+      })
+    },
+  },
   extraReducers: {
     [fetchNotifications.fulfilled]: (state, action) => {
+      // Any 'read' notifications are no longer new
+      state.forEach((notification) => (notification.isNew = !notification.read))
+
       // Payload will contain an array of notifications
       state.push(...action.payload)
 
@@ -34,6 +44,9 @@ const notificationsSlice = createSlice({
 })
 
 export default notificationsSlice.reducer
+
+// action creators
+export const { allNotificationsRead } = notificationsSlice.actions
 
 // slice selectors
 export const selectAllNotifications = (state) => state.notifications

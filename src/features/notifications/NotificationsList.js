@@ -1,13 +1,24 @@
 import { formatDistanceToNow } from 'date-fns/esm'
 import { parseISO } from 'date-fns/esm/fp'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import classnames from 'classnames'
 import { selectAllUsers } from '../users/usersSlice'
-import { selectAllNotifications } from './notificationsSlice'
+import {
+  allNotificationsRead,
+  selectAllNotifications,
+} from './notificationsSlice'
 
 export default function NotificationsList() {
   const notifications = useSelector(selectAllNotifications)
   const users = useSelector(selectAllUsers)
+  const dispatch = useDispatch()
+  const numNotifications = notifications.length
+
+  useEffect(() => {
+    dispatch(allNotificationsRead())
+  }, [numNotifications, dispatch])
 
   return (
     <section>
@@ -18,8 +29,11 @@ export default function NotificationsList() {
         const user = users.find((user) => user.id === notification.user) || {
           name: 'Unknown User',
         }
+        const notificatonClassnames = classnames('notification', {
+          new: notification.isNew,
+        })
         return (
-          <div key={notification.id} className="notification">
+          <div key={notification.id} className={notificatonClassnames}>
             <div>
               <b>{user.name}</b> {notification.message}
             </div>
