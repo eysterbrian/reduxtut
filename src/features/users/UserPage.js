@@ -8,12 +8,21 @@ export default function UserPage({ match }) {
   const { userId } = match.params
 
   const user = useSelector((state) => selectUserById(state, userId))
+
   // Get all the posts written by this user
-  // TODO: Seems very inefficient to do this every render!!!
-  // TODO: We only fetch posts from PostsPage, so this could be empty if we haven't hit that page yet
-  const userPosts = useSelector(selectAllPosts).filter(
-    (post) => post.user === userId
-  )
+  //
+  // BUG: The result of this useSelector will always return a new array b/c of
+  // the .filter call.  This will trigger a re-render every time this useSelector()
+  // is called.  Note that to get the performance benefits of useSelector (e.g. not
+  // triggering re-render if selection hasn't changed) useSelector's return value must
+  // be reference-equal to the previous value.
+  const userPosts = useSelector((state) => {
+    const allPosts = selectAllPosts(state)
+    return allPosts.filter((post) => post.user === userId)
+  })
+
+  // TODO: We only fetch posts from PostsPage, so userPosts could be empty
+  // if we haven't hit that page yet
 
   // If User doesn't exist then redirect to the main users page
   if (!user) {
