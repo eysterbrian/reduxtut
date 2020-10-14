@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import PostAuthor from './PostAuthor'
-import TimeAgo from './TimeAgo'
-import ReactionButtons from './ReactionButtons'
 import { selectAllPosts, fetchPosts } from './postsSlice'
+import PostExcerpt from './PostExcerpt'
 
 export default function PostsList() {
   // useSelector has access to the entire state in all slices
@@ -31,14 +28,7 @@ export default function PostsList() {
       .slice()
       .sort((a, b) => b.date.localeCompare(a.date))
     content = sortedPosts.map((post) => (
-      <article className="post-excerpt" key={post.id}>
-        <h3>{post.title}</h3>
-        <PostAuthor userId={post.user} />
-        (<TimeAgo timestamp={post.date} />)
-        <p>{post.content.substring(0, 100)}</p>
-        <Link to={`/posts/${post.id}`}>View Post</Link>
-        <ReactionButtons post={post} />
-      </article>
+      <PostExcerpt post={post} key={post.id} />
     ))
   }
 
