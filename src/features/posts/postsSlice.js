@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
 const initialState = {
@@ -96,3 +96,16 @@ export const selectAllPosts = (rootState) => rootState.posts.posts
 
 export const selectPostById = (rootState, postId) =>
   rootState.posts.posts.find((post) => post.id === postId)
+
+// Returns a memoized selector which uses the input selectors to determine
+// whether the output selector has changed
+// -- Uses createSelector() from reselect which is exported with redux-toolkit
+export const selectPostsByUser = createSelector(
+  // Array of input selectors
+  [
+    selectAllPosts, // returns posts (1st arg to output selector)
+    (state, userId) => userId, // returns userId (2nd arg to output selector)
+  ],
+  // output selector / transformer, which is only run if one of its inputs changes
+  (posts, userId) => posts.filter((post) => post.user === userId)
+)
