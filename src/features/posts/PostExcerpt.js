@@ -4,7 +4,7 @@ import PostAuthor from './PostAuthor'
 import ReactionButtons from './ReactionButtons'
 import TimeAgo from './TimeAgo'
 
-export default function PostExcerpt({ post }) {
+export default React.memo(function PostExcerpt({ post }) {
   return (
     <article className="post-excerpt">
       <h3>{post.title}</h3>
@@ -14,4 +14,4 @@ export default function PostExcerpt({ post }) {
       <ReactionButtons post={post} />
     </article>
   )
-}
+})
