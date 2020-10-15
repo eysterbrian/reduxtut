@@ -1,5 +1,12 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from '@reduxjs/toolkit'
 import { client } from '../../api/client'
+
+// Simple entity adapter for users with no custom sorting or initialState
+const usersAdapter = createEntityAdapter()
 
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers', // Action type
@@ -12,13 +19,13 @@ export const fetchUsers = createAsyncThunk(
 
 const usersSlice = createSlice({
   name: 'users',
-  initialState: [],
+  initialState: usersAdapter.getInitialState(),
   reducers: {},
   extraReducers: {
     [fetchUsers.fulfilled]: (sliceState, action) => {
       console.log('Inside fetchUsers...', action.payload)
       // Add all the users to the current state
-      return action.payload
+      return usersAdapter.setAll(sliceState, action)
     },
   },
 })
@@ -26,8 +33,7 @@ const usersSlice = createSlice({
 export default usersSlice.reducer
 
 // Export selectors that encapsulate the structure of the slice's state
-export const selectAllUsers = (rootState) => rootState.users
-
-// To use this selector in useSelector() you must wrap it in a 1-arg fn that takes `state` as param
-export const selectUserById = (rootState, userId) =>
-  rootState.users.find((user) => user.id === userId)
+export const {
+  selectAll: selectAllUsers,
+  selectById: selectUserById,
+} = usersAdapter.getSelectors((rootState) => rootState.users)
