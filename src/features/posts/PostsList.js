@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAllPosts, fetchPosts } from './postsSlice'
+import { fetchPosts, selectPostIds } from './postsSlice'
 import PostExcerpt from './PostExcerpt'
 
 export default function PostsList() {
   // useSelector has access to the entire state in all slices
-  const posts = useSelector(selectAllPosts)
+  const orderedPostIds = useSelector(selectPostIds)
   const dispatch = useDispatch()
 
   const postsStatus = useSelector((rootState) => rootState.posts.status)
@@ -24,11 +24,8 @@ export default function PostsList() {
   } else if (postsStatus === 'error') {
     content = <div>{error}</div>
   } else if (postsStatus === 'succeeded') {
-    const sortedPosts = posts
-      .slice()
-      .sort((a, b) => b.date.localeCompare(a.date))
-    content = sortedPosts.map((post) => (
-      <PostExcerpt post={post} key={post.id} />
+    content = orderedPostIds.map((postId) => (
+      <PostExcerpt postId={postId} key={postId} />
     ))
   }
 

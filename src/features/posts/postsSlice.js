@@ -1,11 +1,23 @@
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+  createEntityAdapter,
+} from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
-const initialState = {
-  posts: [],
+// Create the posts entity adapter
+const postsAdapter = createEntityAdapter({
+  // Sort the array of IDs by date, with newest post first
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+})
+
+// Get the initial state from the entity adapter
+const initialState = postsAdapter.getInitialState({
+  // Pass in the non-post entity related fields
   status: 'idle', // enum 'idle', 'pending', 'succeeded', 'failed'
   error: null,
-}
+})
 
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts', // action type used for generated lifecycle actions
@@ -38,7 +50,7 @@ const postsSlice = createSlice({
     postUpdated: {
       reducer: (sliceState, action) => {
         const { id, title, content } = action.payload // Destructure entire payload to document payload obj shape
-        const post = sliceState.posts.find((post) => post.id === id)
+        const post = sliceState.entities[id] //--- lookup post by id
         if (post) {
           post.title = title
           post.content = content
@@ -55,7 +67,7 @@ const postsSlice = createSlice({
     },
     reactionAdded: (sliceState, action) => {
       const { id, reaction } = action.payload
-      const post = sliceState.posts.find((post) => post.id === id)
+      const post = sliceState.entities[id] //--- lookup post by id
       if (post) {
         post.reactions[reaction]++
       }
@@ -67,19 +79,17 @@ const postsSlice = createSlice({
       state.status = 'pending'
     },
     [fetchPosts.fulfilled]: (state, action) => {
+      // Add any fetched posts to the state
+      // Use the 'upsertMany' reducer as a mutating update utility
+      postsAdapter.upsertMany(state, action.payload)
       state.status = 'succeeded'
-      state.posts = action.payload
     },
     [fetchPosts.rejected]: (state, action) => {
       state.status = 'failed'
       state.error = action.error.message
     },
-    [createPost.fulfilled]: (state, action) => {
-      state.posts.push(action.payload)
-
-      // This action will be returned by the initial createPost dispatch
-      // unless there was an error.
-    },
+    // Use the 'addOne" reducer from the entity adapter for the fulfilled case
+    [createPost.fulfilled]: postsAdapter.addOne,
   },
 })
 
@@ -89,13 +99,14 @@ export default postsSlice.reducer
 export const { postUpdated, reactionAdded } = postsSlice.actions
 
 // Define selectors to encapsulate the structure of the slice's state
+// Export the custom selectors from this adapter
+export const {
+  selectAll: selectAllPosts,
+  selectById: selectPostById,
+  selectIds: selectPostIds,
 
-// Note that `state` is global state here rather than slice's state,
-// so we have to access slice state via state.posts
-export const selectAllPosts = (rootState) => rootState.posts.posts
-
-export const selectPostById = (rootState, postId) =>
-  rootState.posts.posts.find((post) => post.id === postId)
+  // Pass in a selector that returns the posts slice of state
+} = postsAdapter.getSelectors((rootState) => rootState.posts)
 
 // Returns a memoized selector which uses the input selectors to determine
 // whether the output selector has changed
