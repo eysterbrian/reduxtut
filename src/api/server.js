@@ -65,8 +65,9 @@ const notificationTemplates = [
 new Server({
   routes() {
     this.namespace = 'fakeApi'
-    //this.timing = 2000
+    this.timing = 500 //--- can also set timing for a specific route
 
+    // shorthand for auto-creating all the basic CRUD routes for each model
     this.resource('users')
     this.resource('posts')
     this.resource('comments')
@@ -86,6 +87,8 @@ new Server({
         throw new Error('Could not save the post!')
       }
 
+      // Create a new 'post' by first running the factory for 'post'
+      // then adding `data` to that base object
       const result = server.create('post', data)
       return result
     })
@@ -140,6 +143,8 @@ new Server({
     }),
     notification: Model.extend({}),
   },
+  // Every call to server.create('modelname') will first run these factories,
+  // then potentially overwrite any values set in server.create's 2nd arg
   factories: {
     user: Factory.extend({
       id() {
@@ -159,6 +164,7 @@ new Server({
       },
 
       afterCreate(user, server) {
+        // Create a few posts for each user
         server.createList('post', 3, { user })
       },
     }),
@@ -209,6 +215,7 @@ new Server({
     comment: IdSerializer,
   },
   seeds(server) {
-    server.createList('user', 3)
+    // Create a few sample users
+    server.createList('user', 5)
   },
 })
